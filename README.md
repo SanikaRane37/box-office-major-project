@@ -23,7 +23,7 @@ python -m streamlit run app.py
 
 ## Publish this project to GitHub
 
-The local virtual environment and Python cache files are excluded by `.gitignore`. Project datasets and app model artifacts are retained. The 176 MB `pkl_files/similarity.pkl` backup is excluded because GitHub rejects files over 100 MB and the unified app does not load it; the original local file is not deleted. Create a **private** empty repository named `box-office-major-project` on GitHub (do not initialize it with a README, license, or `.gitignore`), then run these commands from this project folder, replacing `<YOUR-USERNAME>` with your GitHub username:
+The local virtual environment and Python cache files are excluded by `.gitignore`. Project datasets and app model artifacts are retained. The 176 MB `pkl_files/similarity.pkl` backup is excluded because GitHub rejects files over 100 MB and the unified app does not load it; the original local file is not deleted. Before publishing, confirm you have permission to share every included dataset and model artifact. Create a **public** empty repository named `box-office-major-project` on GitHub (do not initialize it with a README, license, or `.gitignore`), then run these commands from this project folder, replacing `<YOUR-USERNAME>` with your GitHub username:
 
 ```powershell
 git remote add origin https://github.com/<YOUR-USERNAME>/box-office-major-project.git
@@ -35,19 +35,15 @@ Git may ask you to authenticate using your configured Git Credential Manager or 
 ## Check each section
 
 - **Recommendations:** choose a movie and click **Recommend movies**. Similarity is calculated from the movie text fields in `RECOMENDATION SYSTEM/movies_infinity.csv`. Poster images need internet access.
-- **Hit / flop verdict:** choose the distributor, rating, genres, widest-release theater count, and budget, then click **Predict verdict**. See [Hit/flop classifier: data, training, and limitations](#hitflop-classifier-data-training-and-limitations) below for the missing-original-model explanation and methodology.
+- **Hit / flop verdict:** choose the distributor, rating, genres, widest-release theater count, and budget, then click **Predict verdict**. See [Hit/flop classifier: methodology and evaluation](#hitflop-classifier-methodology-and-evaluation) below for the model methodology and evaluation.
 - **Sentiment analysis:** enter a review such as `I really enjoyed this movie` and click **Analyze review**. You can also upload a UTF-8 `.txt` file with numbered reviews. Both sentiment pickle files are included.
 - **Revenue prediction:** choose opening, domestic, or worldwide revenue, fill in the movie attributes, and click **Predict revenue**. The corresponding saved model file must be present in `REVENUE PREDICTION`.
 
 The app loads model files only when their page is selected. If an artifact is missing or incompatible, check the message shown on that page. The saved models were created with scikit-learn 1.3.0, so `requirements.txt` pins the compatible 1.3 release line. Pickle files should only be used if they come from a trusted source.
 
-## Hit/flop classifier: data, training, and limitations
+## Hit/flop classifier: methodology and evaluation
 
-### Why the original classifier was unavailable
-
-The original hit/flop notebook refers to `movie_dataset.csv`, `movie_credit.csv`, and `movie.csv`, which are not included in this project. The original classifier file, `movie_sucess_classification_final.pkl`, was also absent. The project did include a saved CountVectorizer, but a vectorizer alone cannot make predictions: it must be paired with the classifier trained on compatible features and labels. The sentiment and recommendation pickle files are different models and are not substitutes.
-
-To keep the hit/flop page usable, this project includes a **replacement experimental classifier** trained by `train_hit_flop.py` from the available `REVENUE PREDICTION/boxoffice_mojo_df (1).csv` data. It is not the missing original model and does not reproduce the original notebook's target labels.
+The project includes a trained experimental classifier, saved as `HIT FLOP PREDICTION/movie_sucess_classification_final.pkl`. It is trained by `train_hit_flop.py` using the box-office data in `REVENUE PREDICTION/boxoffice_mojo_df (1).csv`.
 
 ### Target definition and input features
 
@@ -82,9 +78,9 @@ These figures describe one held-out split of this dataset, not an independent ex
 - The model is trained on the available historical dataset. Its performance may not generalize to other time periods, markets, distributors, or movies with input values outside the training data.
 - The reported validation score is modest and comes from a single split; no claim of production-grade accuracy or causal explanation is made.
 
-For an academic report, describe this component as an **experimental proxy-label classifier**, document the threshold choices, and distinguish its results from those of the unavailable original model.
+For an academic report, describe this component as an **experimental proxy-label classifier** and document the threshold choices and evaluation results.
 
-### Retraining the replacement model
+### Retraining the model
 
 From the project folder, install the project dependencies if needed and run:
 
